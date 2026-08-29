@@ -455,8 +455,12 @@
         bgAudio.addEventListener('canplay', startAudio, {once:true});
         window.addEventListener('load', startAudio, {once:true});
         startAudio();
-        // Browser yang menolak autoplay bersuara akan mulai pada sentuhan pertama.
-        document.addEventListener('pointerdown', startAudio, {once:true});
+        // Di ponsel, putar dalam event sentuhan langsung agar memenuhi kebijakan autoplay.
+        // Pengguna cukup menyentuh bagian mana pun (misalnya keypad PIN), bukan tombol play.
+        document.addEventListener('pointerdown', startAudio, {once:true, capture:true});
+        document.addEventListener('touchstart', startAudio, {once:true, capture:true, passive:true});
+        document.addEventListener('click', startAudio, {once:true, capture:true});
+        document.addEventListener('keydown', startAudio, {once:true, capture:true});
         // try autoplay
         bgAudio.play().then(()=>{
           // playing, ensure fallback hidden
