@@ -152,7 +152,7 @@
     <div class="drop hat drift" style="left:86%;animation:fall 7.9s linear 3.4s infinite">🎉</div>
   </div>
   <button id="backTop" class="back-btn" aria-label="Kembali" title="Kembali">←</button>
-  <audio id="bgAudio" src="audio/song.mp3" preload="auto" loop></audio>
+  <audio id="bgAudio" src="audio/song.mp3" preload="auto" autoplay loop playsinline></audio>
   <button id="audioPlay" class="back-btn" style="left:auto;right:14px;bottom:14px;top:auto;width:44px;height:44px;background:var(--pink-dark);color:white;display:none;z-index:4" aria-label="Play musik">▶</button>
   <div class="card">
     <main class="stage" role="main">
@@ -449,6 +449,12 @@
       if(bgAudio){
         bgAudio.volume = 0.65;
         bgAudio.loop = true;
+        bgAudio.autoplay = true;
+        bgAudio.playsInline = true;
+        // Mulai segera saat audio siap, lalu coba sekali lagi setelah halaman selesai dimuat.
+        bgAudio.addEventListener('canplay', startAudio, {once:true});
+        window.addEventListener('load', startAudio, {once:true});
+        startAudio();
         // Browser yang menolak autoplay bersuara akan mulai pada sentuhan pertama.
         document.addEventListener('pointerdown', startAudio, {once:true});
         // try autoplay
