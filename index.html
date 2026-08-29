@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday Mandalika!</title>
+  <meta name="description" content="Interactive birthday page for Mandalika" />
+  <style>
+    :root{
+      --pink-light:#F6C49B;
+      --pink-dark:#D6383B;
+      --bg:#F6C49B;
+      --text:#2B2D31;
+      --glass:rgba(246,196,155,.68);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+      background:linear-gradient(180deg,#F6C49B,#f9d9ba);
+      color:var(--text);display:flex;align-items:center;justify-content:center;
+      padding:20px;position:relative;overflow:hidden;
+    }
+    .card{width:100%;max-width:960px;background:linear-gradient(180deg,rgba(246,196,155,.72),rgba(255,245,234,.56));border-radius:20px;box-shadow:0 10px 30px rgba(43,45,49,.16);overflow:hidden;position:relative;z-index:2}
+    .stage{padding:40px;min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+
+    /* Intro */
+    .title{
+      font-size:clamp(28px,6vw,56px);font-weight:800;color:var(--pink-dark);margin:0;
+      /* typing effect */
+      display:inline-block;white-space:nowrap;overflow:hidden;border-right:.12em solid var(--pink-dark);
+      max-width:0; /* start hidden */
+      animation:typing 2.4s steps(25,end) forwards, blink-caret .75s step-end infinite;
+    }
+    @keyframes typing{from{max-width:0}to{max-width:100%}}
+    @keyframes blink-caret{from, to{border-color:transparent}50%{border-color:var(--pink-dark)}}
+
+    /* fade in subtext and button after typing */
+    .sub,.btn{opacity:0;transform:translateY(6px);animation:fadeIn .5s ease-out forwards 2.5s}
+    @keyframes fadeIn{to{opacity:1;transform:none}}
+
+    .sub{margin-top:12px;font-size:16px;color:var(--text)}
+    .btn{margin-top:28px;padding:12px 22px;border-radius:12px;border:0;background:linear-gradient(90deg,var(--pink-dark),#ef5650);color:#fff;font-weight:700;cursor:pointer;font-size:16px}
+    .btn:active{transform:translateY(1px)}
+
+    /* photo flip gallery on intro */
+    .photo-caption{margin-top:28px;font-size:14px;color:var(--text);font-weight:700}
+    .photo-grid{display:flex;gap:16px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+    .flip-card{width:200px;height:140px;perspective:900px;background:transparent;border:0;padding:0}
+    .card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .7s ease}
+    .flip-card.flipped .card-inner{transform:rotateY(180deg)}
+    .card-front,.card-back{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;overflow:hidden}
+    .card-front{background:linear-gradient(180deg,#fff7ef,#F6C49B);border:2px dashed rgba(214,56,59,.35);color:var(--pink-dark);font-weight:700}
+    .card-back{transform:rotateY(180deg);background:#fff7ef;border:2px solid rgba(214,56,59,.22)}
+    .card-back img{width:100%;height:100%;object-fit:cover;display:block}
+    .flip-card{cursor:pointer}
+    @media (max-width:520px){.flip-card{width:150px;height:110px}}
+
+    .card-front .card-icon{width:44px;height:32px;margin-bottom:8px;display:block}
+    .card-front .card-label{font-size:13px}
+
+    /* PIN section */
+    .pin-screen{display:none;flex-direction:column;align-items:center}
+    .pin-display{display:flex;gap:8px;margin-bottom:18px}
+    .pin-digit{width:18px;height:28px;border-radius:6px;background:var(--glass);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--pink-dark)}
+    .pin-input{min-width:160px;padding:12px;border-radius:12px;border:2px solid rgba(214,56,59,.22);background:transparent;font-size:18px;text-align:center}
+
+    .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:320px;max-width:88vw}
+    .key{padding:18px;border-radius:12px;background:linear-gradient(180deg,#fff7ef,#F6C49B);box-shadow:inset 0 -3px 0 rgba(43,45,49,.08);font-size:20px;color:var(--text);cursor:pointer}
+    .key.wide{grid-column:span 3}
+    .actions{display:flex;gap:12px;margin-top:12px}
+    .ghost{background:transparent;border:2px dashed rgba(214,56,59,.48);color:var(--pink-dark)}
+
+    /* success */
+    .success{display:none;padding:30px;align-items:center;justify-content:center;flex-direction:column}
+    .celebrate{font-size:28px;color:var(--pink-dark);font-weight:800}
+    .balloons{position:relative;width:100%;height:160px;margin-top:20px}
+    .balloon{position:absolute;bottom:-40px;width:48px;height:64px;border-radius:60% 60% 55% 55%;background:var(--pink-dark);opacity:0.95;animation:floatUp linear infinite}
+    .balloon.p1{left:16%;background:#F6C49B;animation-duration:6s;animation-delay:0.2s}
+    .balloon.p2{left:38%;background:#ef5650;animation-duration:5.6s;animation-delay:0.6s}
+    .balloon.p3{left:62%;background:#D6383B;animation-duration:6.5s;animation-delay:0.1s}
+    .balloon.p4{left:82%;background:#f3ad74;animation-duration:7s;animation-delay:0.7s}
+    @keyframes floatUp{0%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-120px) rotate(6deg)}100%{transform:translateY(-260px) rotate(-6deg);opacity:0}}
+
+    /* responsive */
+    @media (max-width:520px){
+      .stage{padding:24px}
+      .pad{width:260px}
+    }
+
+    /* Background falling decorations */
+    .bg-anim{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+    .drop{position:absolute;top:-20vh;font-size:48px;opacity:0.95;will-change:transform,opacity}
+    .drop.cake{font-size:60px;filter:drop-shadow(0 6px 10px rgba(43,45,49,.18))}
+    .drop.gift{font-size:50px}
+    .drop.hat{font-size:44px}
+    @keyframes fall{
+      0%{transform:translateY(-30vh) rotate(-20deg) translateX(0);opacity:1}
+      50%{transform:translateY(30vh) rotate(40deg) translateX(12px);opacity:1}
+      100%{transform:translateY(120vh) rotate(360deg) translateX(-8px);opacity:0}
+    }
+    /* subtle horizontal drift to avoid straight line falls */
+    .drift{animation-timing-function:linear;animation-iteration-count:infinite}
+
+    /* top-left back button */
+    .back-btn{position:fixed;left:14px;top:14px;width:40px;height:40px;border-radius:10px;border:0;background:var(--pink-light);color:var(--pink-dark);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 6px 14px rgba(0,0,0,0.08);z-index:3;cursor:pointer}
+    .back-btn.disabled{opacity:0.45;pointer-events:none}
+    @media (max-width:420px){.back-btn{left:10px;top:10px;width:36px;height:36px;font-size:16px}}
+
+    /* small helper animations */
+    .shake{animation:shake 0.4s}
+    @keyframes shake{20%{transform:translateX(-8px)}60%{transform:translateX(6px)}100%{transform:none}}
+    /* layar amplop */
+    .envelope-screen{display:none;min-height:420px;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+    .envelope-hint{margin:12px 0 0;color:var(--pink-dark);font-weight:700;letter-spacing:.02em}
+    .envelope{
+      width:min(360px,82vw);aspect-ratio:1.68;position:relative;cursor:pointer;
+      filter:drop-shadow(0 18px 16px rgba(43,45,49,.2));
+      transform:translateZ(0);transition:transform .25s ease;
+    }
+    .envelope:hover,.envelope:focus-visible{transform:translateY(-6px) scale(1.02);outline:none}
+    .envelope:focus-visible{filter:drop-shadow(0 18px 16px rgba(43,45,49,.2)) drop-shadow(0 0 0 4px #F6C49B)}
+    .env-back,.env-front,.env-flap{position:absolute;inset:0;border-radius:10px;overflow:hidden}
+    .env-back{background:linear-gradient(140deg,#F6C49B,#D6383B)}
+    .env-letter{position:absolute;z-index:2;left:8%;right:8%;bottom:8%;height:64%;padding:18px 12px;background:#fff7ef;border-radius:7px;color:var(--text);font-family:Georgia,serif;box-shadow:0 2px 8px rgba(43,45,49,.16);opacity:0;transform:translateY(28%);transition:transform .75s cubic-bezier(.22,.8,.24,1),opacity .2s ease .25s}
+    .env-letter::before{content:'Untuk Mandalika';font-weight:700;font-size:clamp(15px,3vw,20px)}
+    .env-letter::after{content:'♡';display:block;font-size:28px;margin-top:8px;color:var(--pink-dark)}
+    .env-front{z-index:4;background:linear-gradient(145deg,transparent 49.5%,#D6383B 50%) left,linear-gradient(215deg,transparent 49.5%,#e85d58 50%) right;background-size:50% 100%;background-repeat:no-repeat;pointer-events:none}
+    .env-flap{z-index:5;clip-path:polygon(0 0,100% 0,50% 62%);background:linear-gradient(180deg,#D6383B,#bd2e35);transform-origin:top;transition:transform .72s cubic-bezier(.22,.8,.24,1)}
+    .env-seal{position:absolute;z-index:6;top:45%;left:50%;display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 35% 28%,#fff1c9,#F6C49B);border:3px solid #f3ad74;color:#D6383B;font-size:27px;box-shadow:0 3px 6px rgba(43,45,49,.25);transform:translate(-50%,-50%);transition:opacity .25s ease,transform .38s ease}
+    .envelope:not(.open) .env-seal{animation:seal-pulse 1.6s ease-in-out infinite}
+    .envelope.open{pointer-events:none;animation:envelope-exit .8s ease .7s forwards}
+    .envelope.open .env-flap{transform:rotateX(180deg)}
+    .envelope.open .env-letter{opacity:1;transform:translateY(-42%)}
+    .envelope.open .env-seal{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+    @keyframes seal-pulse{50%{transform:translate(-50%,-50%) scale(1.08)}}
+    @keyframes envelope-exit{to{opacity:0;transform:translateY(-32px) scale(1.12)}}
+    .final-page{display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:30px;animation:page-arrive .55s ease both}
+    @keyframes page-arrive{from{opacity:0;transform:translateY(16px) scale(.98)}to{opacity:1;transform:none}}
+    .envelope-screen > .celebrate,.envelope-screen > .photo-caption,.envelope-screen > .photo-grid{display:none}
+  </style>
+</head>
+<body>
+  <div class="bg-anim" aria-hidden="true">
+    <div class="drop cake drift" style="left:6%;animation:fall 8s linear 0s infinite">🎂</div>
+    <div class="drop gift drift" style="left:22%;animation:fall 7s linear 0.9s infinite">🎁</div>
+    <div class="drop hat drift" style="left:36%;animation:fall 6.6s linear 0.4s infinite">🎉</div>
+    <div class="drop cake drift" style="left:50%;animation:fall 9s linear 1.6s infinite">🎂</div>
+    <div class="drop gift drift" style="left:64%;animation:fall 7.5s linear 0.2s infinite">🎁</div>
+    <div class="drop hat drift" style="left:78%;animation:fall 6.8s linear 1.1s infinite">🥳</div>
+    <div class="drop gift drift" style="left:42%;animation:fall 6.2s linear 2.8s infinite">🎁</div>
+    <div class="drop hat drift" style="left:86%;animation:fall 7.9s linear 3.4s infinite">🎉</div>
+  </div>
+  <button id="backTop" class="back-btn" aria-label="Kembali" title="Kembali">←</button>
+  <audio id="bgAudio" src="audio/song.mp3" preload="auto" loop></audio>
+  <button id="audioPlay" class="back-btn" style="left:auto;right:14px;bottom:14px;top:auto;width:44px;height:44px;background:var(--pink-dark);color:white;display:none;z-index:4" aria-label="Play musik">▶</button>
+  <div class="card">
+    <main class="stage" role="main">
+      <!-- Intro page -->
+      <section id="intro">
+        <h1 class="title">Happy Birthday Mandalika!</h1>
+        <p class="sub">Hadiah dari Adik terganteng sedunia🎂</p>
+        <button id="toPin" class="btn" aria-controls="pin">Buka Hadiah</button>
+      </section>
+
+      <!-- PIN page -->
+      <section id="pinScreen" class="pin-screen" aria-hidden="true">
+        <h2 style="margin:0 0 12px 0;">PINnyo tanggal lahir samo bulan wok</h2>
+        <div class="pin-display" aria-hidden="true">
+          <div class="pin-digit" id="d1">&nbsp;</div>
+          <div class="pin-digit" id="d2">&nbsp;</div>
+          <div class="pin-digit" id="d3">&nbsp;</div>
+          <div class="pin-digit" id="d4">&nbsp;</div>
+        </div>
+
+        <div class="pad" role="application" aria-label="Keypad">
+          <button class="key">1</button>
+          <button class="key">2</button>
+          <button class="key">3</button>
+          <button class="key">4</button>
+          <button class="key">5</button>
+          <button class="key">6</button>
+          <button class="key">7</button>
+          <button class="key">8</button>
+          <button class="key">9</button>
+          <button class="key ghost" id="clear">Clear</button>
+          <button class="key">0</button>
+          <button class="key ghost" id="back">⌫</button>
+        </div>
+        <div class="actions">
+          <button class="btn" id="confirm">Confirm</button>
+          <button class="btn ghost" id="cancelPin">Kembali</button>
+        </div>
+      </section>
+
+      <!-- Success page -->
+      <section id="success" class="envelope-screen" aria-hidden="true">
+        <div class="celebrate">Selamat Ulang Tahun, Mandalika! 🎉</div>
+        <div class="photo-caption">klik kartu</div>
+        <div class="photo-grid" aria-live="polite">
+          <button class="flip-card" aria-pressed="false">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-label">🎴</div>
+              </div>
+              <div class="card-back"><img src="image/aceng.jpg" alt="Foto 1"></div>
+            </div>
+          </button>
+          <button class="flip-card" aria-pressed="false">
+            <div class="card-inner">
+              <div class="card-front">
+                
+                <div class="card-label">🎴</div>
+              </div>
+              <div class="card-back"><img src="image/triosableng.jpg" alt="Foto 2"></div>
+            </div>
+          </button>
+          <button class="flip-card" aria-pressed="false">
+            <div class="card-inner">
+              <div class="card-front">
+                <div class="card-label">🎴</div>
+              </div>
+              <div class="card-back"><img src="image/luffy.jpg" alt="Foto 3"></div>
+            </div>
+          </button>
+        </div>
+        <!-- Amplop muncul setelah PIN benar -->
+        <div id="envelope" class="envelope" role="button" tabindex="0" aria-label="Buka surat" title="Klik untuk membuka surat">
+          <div class="env-back"></div>
+          <div class="env-letter"></div>
+          <div class="env-front"></div>
+          <div class="env-flap"></div>
+          <div class="env-seal" aria-hidden="true">♥</div>
+        </div>
+        <p class="envelope-hint">klik suratnyo lur✨</p>
+      </section>
+
+        <!-- final page shown after envelope opened -->
+        <section id="finalPage" class="final-page" aria-hidden="true">
+          <h2 style="color:var(--pink-dark);margin:6px 0 12px 0">Selamat Ulang Tahun, Mandalika!🎉</h2>
+          <div class="photo-caption">Klik kartu foto wok</div>
+          <div class="photo-grid" aria-live="polite">
+            <button class="flip-card" aria-pressed="false"><div class="card-inner"><div class="card-front"><div class="card-label">🎴</div></div><div class="card-back"><img src="image/aceng.jpg" alt="Foto 1"></div></div></button>
+            <button class="flip-card" aria-pressed="false"><div class="card-inner"><div class="card-front"><div class="card-label">🎴</div></div><div class="card-back"><img src="image/triosableng.jpg" alt="Foto 2"></div></div></button>
+            <button class="flip-card" aria-pressed="false"><div class="card-inner"><div class="card-front"><div class="card-label">🎴</div></div><div class="card-back"><img src="image/luffy.jpg" alt="Foto 3"></div></div></button>
+          </div>
+          <p style="max-width:700px">Semoga ulang tahun yang ke-29, Mbak! Adakah 100 ribu</p>
+        </section>
+    </main>
+  </div>
+
+  <script>
+    (function(){
+      const intro = document.getElementById('intro');
+      const toPin = document.getElementById('toPin');
+      const pinScreen = document.getElementById('pinScreen');
+      const success = document.getElementById('success');
+
+      const digits = ['', '', '', ''];
+      const dEls = [document.getElementById('d1'),document.getElementById('d2'),document.getElementById('d3'),document.getElementById('d4')];
+      const keys = Array.from(document.querySelectorAll('.key'));
+      const clearBtn = document.getElementById('clear');
+      const backBtn = document.getElementById('back');
+      const confirmBtn = document.getElementById('confirm');
+      const cancelPin = document.getElementById('cancelPin');
+      const topBack = document.getElementById('backTop');
+
+      const CORRECT = '2908';
+
+      function showPinScreen(){
+        intro.style.display='none';
+        pinScreen.style.display='flex';
+        pinScreen.setAttribute('aria-hidden','false');
+        // reset
+        clearDigits();
+        updateBackBtn();
+      }
+
+      function showSuccess(){
+        pinScreen.style.display='none';
+        success.style.display='flex';
+        success.setAttribute('aria-hidden','false');
+        resetFlips();
+        const envelopeEl = document.getElementById('envelope');
+        const finalPage = document.getElementById('finalPage');
+        if(envelopeEl){ envelopeEl.style.display = 'block'; envelopeEl.classList.remove('open'); }
+        if(finalPage){ finalPage.style.display = 'none'; finalPage.setAttribute('aria-hidden','true'); }
+        updateBackBtn();
+      }
+
+      function clearDigits(){
+        for(let i=0;i<4;i++){digits[i]='';dEls[i].textContent=' ';dEls[i].classList.remove('shake')}
+      }
+
+      function updateDisplay(){
+        for(let i=0;i<4;i++){
+          dEls[i].textContent = digits[i] || '\u00A0';
+        }
+      }
+
+      function pushDigit(n){
+        for(let i=0;i<4;i++){
+          if(!digits[i]){digits[i]=String(n);updateDisplay();return}
+        }
+      }
+
+      function popDigit(){
+        for(let i=3;i>=0;i--){if(digits[i]){digits[i]='';updateDisplay();return}}
+      }
+
+      keys.forEach(k=>{
+        k.addEventListener('click',()=>{
+          const v = k.textContent.trim();
+          if(v === 'Clear') return clearDigits();
+          if(v === '⌫') return popDigit();
+          if(/^[0-9]$/.test(v)) pushDigit(v);
+        })
+      })
+
+      clearBtn.addEventListener('click',clearDigits);
+      backBtn.addEventListener('click',popDigit);
+
+      function updateBackBtn(){
+        // if intro visible, disable the top-back button; otherwise enable
+        const introVisible = intro.style.display !== 'none';
+        if(introVisible){
+          topBack.classList.add('disabled');
+          topBack.setAttribute('aria-disabled','true');
+        } else {
+          topBack.classList.remove('disabled');
+          topBack.removeAttribute('aria-disabled');
+        }
+      }
+
+      topBack.addEventListener('click', ()=>{
+        // navigate back: finalPage -> success, success -> pin, pin -> intro
+        const finalPage = document.getElementById('finalPage');
+        const envelopeEl = document.getElementById('envelope');
+        if(finalPage && finalPage.style.display === 'flex'){
+          finalPage.style.display = 'none';
+          success.style.display = 'flex';
+          finalPage.setAttribute('aria-hidden','true');
+          success.setAttribute('aria-hidden','false');
+          // keep envelope visible but closed
+          if(envelopeEl){ envelopeEl.classList.remove('open'); }
+        } else if(success.style.display === 'flex'){
+          success.style.display='none';
+          pinScreen.style.display='flex';
+          success.setAttribute('aria-hidden','true');
+          pinScreen.setAttribute('aria-hidden','false');
+          clearDigits();
+        } else if(pinScreen.style.display === 'flex'){
+          pinScreen.style.display='none';
+          intro.style.display='block';
+          pinScreen.setAttribute('aria-hidden','true');
+          // reset flips when returning to intro
+          resetFlips();
+          // hide envelope and final page
+          if(envelopeEl){ envelopeEl.style.display='none'; envelopeEl.classList.remove('open'); }
+          if(finalPage){ finalPage.style.display='none'; }
+        }
+        updateBackBtn();
+      });
+
+      toPin.addEventListener('click',showPinScreen);
+      cancelPin.addEventListener('click',()=>{
+        pinScreen.style.display='none';
+        intro.style.display='block';
+        pinScreen.setAttribute('aria-hidden','true');
+        resetFlips();
+        // hide envelope if visible
+        const envelopeEl = document.getElementById('envelope');
+        if(envelopeEl){ envelopeEl.style.display='none'; envelopeEl.classList.remove('open'); }
+        updateBackBtn();
+      });
+
+      confirmBtn.addEventListener('click',()=>{
+        const code = digits.join('');
+        if(code === CORRECT){
+          startAudio();
+          showSuccess();
+        } else {
+          // shake
+          dEls.forEach(el=>{el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),420)});
+          // brief clear
+          setTimeout(clearDigits,450);
+        }
+      });
+
+      // allow keyboard input for desktop
+      document.addEventListener('keydown', (e)=>{
+        if(pinScreen.style.display !== 'flex') return;
+        if(e.key >= '0' && e.key <= '9'){pushDigit(e.key)}
+        if(e.key === 'Backspace') popDigit();
+        if(e.key === 'Enter') confirmBtn.click();
+      });
+
+      // small accessibility: focus first button
+      toPin.focus();
+      // initialize back button state
+      updateBackBtn();
+      // photo flip handlers
+      const flipCards = Array.from(document.querySelectorAll('.flip-card'));
+      flipCards.forEach((btn)=>{
+        btn.addEventListener('click', ()=>{
+          const is = btn.classList.toggle('flipped');
+          btn.setAttribute('aria-pressed', String(is));
+        });
+      });
+
+      // reset flips when returning to intro
+      function resetFlips(){
+        flipCards.forEach(b=>{b.classList.remove('flipped');b.setAttribute('aria-pressed','false')});
+      }
+
+      // Amplop terbuka, kemudian pindah ke halaman berikutnya.
+      const envelopeBtn = document.getElementById('envelope');
+      const finalPage = document.getElementById('finalPage');
+      function openEnvelope(){
+        if(!envelopeBtn) return;
+          if(envelopeBtn.classList.contains('open')) return; // already opened
+          envelopeBtn.classList.add('open');
+        setTimeout(()=>{
+          success.style.display = 'none';
+          success.setAttribute('aria-hidden','true');
+          finalPage.style.display = 'flex';
+          finalPage.setAttribute('aria-hidden','false');
+        }, 1250);
+      }
+      if(envelopeBtn){
+        envelopeBtn.addEventListener('click', openEnvelope);
+        envelopeBtn.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openEnvelope(); }
+        });
+      }
+
+      // end script
+      // audio autoplay handling
+      const bgAudio = document.getElementById('bgAudio');
+      const audioPlayBtn = document.getElementById('audioPlay');
+      function startAudio(){
+        if(!bgAudio) return;
+        bgAudio.play().then(()=>{
+          if(audioPlayBtn) audioPlayBtn.style.display = 'none';
+        }).catch(()=>{
+          if(audioPlayBtn) audioPlayBtn.style.display = 'flex';
+        });
+      }
+      if(bgAudio){
+        bgAudio.volume = 0.65;
+        bgAudio.loop = true;
+        // Browser yang menolak autoplay bersuara akan mulai pada sentuhan pertama.
+        document.addEventListener('pointerdown', startAudio, {once:true});
+        // try autoplay
+        bgAudio.play().then(()=>{
+          // playing, ensure fallback hidden
+          if(audioPlayBtn) audioPlayBtn.style.display = 'none';
+        }).catch(()=>{
+          // autoplay blocked — show play button for user
+          if(audioPlayBtn) audioPlayBtn.style.display = 'flex';
+        });
+        // user can click fallback play button
+        if(audioPlayBtn){
+          audioPlayBtn.addEventListener('click', ()=>{
+            bgAudio.play().then(()=>{audioPlayBtn.style.display='none'}).catch(()=>{});
+          });
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
